@@ -1245,7 +1245,7 @@ function createTodoElement(todo) {
         `;
     } else {
         subtasksHtml = `
-            <div class="subtasks-container" style="display: none;">
+            <div class="subtasks-container">
                 <button class="add-subtask-btn ${isCompleted ? 'disabled' : ''}">+ Add subtask</button>
             </div>
         `;

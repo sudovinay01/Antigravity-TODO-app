@@ -1733,3 +1733,103 @@ body {
 body.offline .app-container {
     padding-top: 50px;
 }
+
+/* ===================================
+   Warning Toast Styles
+   =================================== */
+.toast.warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border-color: #d97706;
+}
+
+.toast.success {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border-color: #16a34a;
+}
+
+.toast.error {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border-color: #dc2626;
+}
+
+/* ===================================
+   Install Modal (Full Page)
+   =================================== */
+.install-modal .modal-content {
+    max-width: 400px;
+}
+
+.install-modal-content {
+    position: relative;
+    padding: 0;
+}
+
+.install-modal-body {
+    padding: 40px 30px;
+    text-align: center;
+}
+
+.install-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.install-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.install-description {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.install-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px 0;
+    text-align: left;
+    background: var(--bg-input);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+}
+
+.install-features li {
+    padding: 8px 0;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.install-features li:last-child {
+    border-bottom: none;
+}
+
+.install-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.install-modal-actions .btn-primary,
+.install-modal-actions .btn-secondary {
+    flex: 1;
+    max-width: 150px;
+}

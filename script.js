@@ -290,11 +290,29 @@ function initPWA() {
         });
     }
 
-    // Dismiss install button
+    // Dismiss install button (X button)
     if (dismissInstall) {
         dismissInstall.addEventListener('click', () => {
             installBanner.classList.remove('visible');
             localStorage.setItem('pwa-install-dismissed', 'true');
+        });
+    }
+
+    // Dismiss install button (Not Now button)
+    const dismissInstallBtn = document.getElementById('dismissInstallBtn');
+    if (dismissInstallBtn) {
+        dismissInstallBtn.addEventListener('click', () => {
+            installBanner.classList.remove('visible');
+            localStorage.setItem('pwa-install-dismissed', 'true');
+        });
+    }
+
+    // Click outside to close install modal
+    if (installBanner) {
+        installBanner.addEventListener('click', (e) => {
+            if (e.target === installBanner) {
+                installBanner.classList.remove('visible');
+            }
         });
     }
 
@@ -525,7 +543,7 @@ function toggleTodo(id) {
     if (!todo.completed && todo.subtasks && todo.subtasks.length > 0) {
         const incompleteSubtasks = todo.subtasks.filter(s => !s.completed);
         if (incompleteSubtasks.length > 0) {
-            showToast(`Complete all ${incompleteSubtasks.length} subtask(s) first!`);
+            showToast(`Complete all ${incompleteSubtasks.length} subtask(s) first!`, false, 'warning');
             return;
         }
     }
@@ -1241,17 +1259,25 @@ function importTodos(e) {
 // ===================================
 // Toast Notifications
 // ===================================
-function showToast(message, showUndo = false) {
+function showToast(message, showUndo = false, type = 'info') {
     toastContainer.querySelectorAll('.toast').forEach(toast => {
         toast.classList.add('hiding');
         setTimeout(() => toast.remove(), 300);
     });
 
     const toast = document.createElement('div');
-    toast.className = 'toast';
+    toast.className = `toast ${type}`;
+
+    const icons = {
+        info: 'ℹ️',
+        warning: '⚠️',
+        success: '✅',
+        error: '❌'
+    };
+    const icon = showUndo ? '↩️' : (icons[type] || 'ℹ️');
 
     toast.innerHTML = `
-        <span class="toast-icon">${showUndo ? '↩️' : 'ℹ️'}</span>
+        <span class="toast-icon">${icon}</span>
         <span class="toast-message">${escapeHtml(message)}</span>
         ${showUndo ? '<button class="toast-undo">Undo</button>' : ''}
         <button class="toast-close">×</button>

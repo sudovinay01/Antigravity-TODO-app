@@ -113,12 +113,26 @@
             <span>You're offline. Changes will sync when back online.</span>
         </div>
 
-        <!-- Install Prompt -->
-        <div class="install-banner" id="installBanner">
-            <span class="install-text">📱 Install this app for a better experience!</span>
-            <div class="install-actions">
-                <button class="install-btn" id="installBtn">Install</button>
-                <button class="install-dismiss" id="dismissInstall">×</button>
+        <!-- Install Prompt Modal -->
+        <div class="modal install-modal" id="installBanner">
+            <div class="modal-content install-modal-content">
+                <button class="modal-close" id="dismissInstall">×</button>
+                <div class="install-modal-body">
+                    <div class="install-icon">📱</div>
+                    <h2 class="install-title">Install Todo App</h2>
+                    <p class="install-description">Install this app on your device for faster access and offline
+                        support!</p>
+                    <ul class="install-features">
+                        <li>⚡ Faster load times</li>
+                        <li>📡 Works offline</li>
+                        <li>🔔 Get reminders</li>
+                        <li>🏠 Access from home screen</li>
+                    </ul>
+                    <div class="install-modal-actions">
+                        <button class="btn-secondary" id="dismissInstallBtn">Not Now</button>
+                        <button class="btn-primary" id="installBtn">Install App</button>
+                    </div>
+                </div>
             </div>
         </div>
 

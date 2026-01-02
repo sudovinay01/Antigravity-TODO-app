@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="A modern, sleek todo application with dark and light theme support">
+    <meta name="theme-color" content="#6366f1">
     <title>Todo App | Stay Organized</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
 </head>
+
 <body data-theme="dark">
     <div class="app-container">
         <!-- Background Gradient Orbs -->
@@ -28,33 +32,71 @@
                     </h1>
                     <p class="subtitle">Stay organized, stay productive</p>
                 </div>
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-                    <span class="theme-icon sun">☀️</span>
-                    <span class="theme-icon moon">🌙</span>
-                </button>
+                <div class="header-right">
+                    <div class="search-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search tasks...">
+                    </div>
+                    <button class="icon-btn" id="soundToggle" aria-label="Toggle sound" title="Toggle sound">
+                        <span class="sound-on">🔊</span>
+                        <span class="sound-off">🔇</span>
+                    </button>
+                    <button class="icon-btn theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <span class="theme-icon sun">☀️</span>
+                        <span class="theme-icon moon">🌙</span>
+                    </button>
+                </div>
             </header>
 
             <!-- Add Todo Section -->
             <div class="add-todo-section">
-                <div class="input-wrapper">
-                    <input 
-                        type="text" 
-                        id="todoInput" 
-                        class="todo-input" 
-                        placeholder="What needs to be done?"
-                        autocomplete="off"
-                    >
+                <div class="input-row">
+                    <input type="text" id="todoInput" class="todo-input" placeholder="What needs to be done?"
+                        autocomplete="off">
                     <button class="add-btn" id="addBtn" aria-label="Add todo">
                         <span class="add-icon">+</span>
                     </button>
                 </div>
+                <div class="options-row">
+                    <div class="option-group">
+                        <select id="prioritySelect" class="option-select">
+                            <option value="low">🟢 Low</option>
+                            <option value="medium">🟡 Medium</option>
+                            <option value="high">🔴 High</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <input type="date" id="dueDateInput" class="option-input date-input" title="Due date">
+                    </div>
+                    <div class="option-group">
+                        <input type="text" id="categoryInput" class="option-input category-input" placeholder="Category"
+                            list="categoryList">
+                        <datalist id="categoryList"></datalist>
+                    </div>
+                </div>
             </div>
 
-            <!-- Filter Tabs -->
-            <div class="filter-tabs">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="active">Active</button>
-                <button class="filter-btn" data-filter="completed">Completed</button>
+            <!-- Filter & Actions Row -->
+            <div class="filter-actions-row">
+                <div class="filter-tabs">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="active">Active</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                </div>
+                <div class="action-btns">
+                    <button class="action-btn" id="exportBtn" title="Export todos">
+                        <span>📤</span> Export
+                    </button>
+                    <button class="action-btn" id="importBtn" title="Import todos">
+                        <span>📥</span> Import
+                    </button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                </div>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="category-filter" id="categoryFilter">
+                <button class="category-pill active" data-category="all">All</button>
             </div>
 
             <!-- Todo List -->
@@ -74,8 +116,49 @@
                 <button class="clear-btn" id="clearCompleted">Clear Completed</button>
             </footer>
         </div>
+
+        <!-- Toast Container -->
+        <div class="toast-container" id="toastContainer"></div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="soundAdd" preload="auto">
+        <source src="data:audio/wav;base64,UklGRl9vT19teleWAQAAAAAAAABBAAAAAAAAAAAAAAAA" type="audio/wav">
+    </audio>
+
+    <!-- Keyboard Shortcuts Modal -->
+    <div class="modal" id="shortcutsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⌨️ Keyboard Shortcuts</h2>
+                <button class="modal-close" id="closeShortcuts">×</button>
+            </div>
+            <div class="shortcuts-list">
+                <div class="shortcut-item">
+                    <kbd>Enter</kbd>
+                    <span>Add new todo</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>Escape</kbd>
+                    <span>Cancel edit</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>Ctrl + F</kbd>
+                    <span>Focus search</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>Ctrl + N</kbd>
+                    <span>New todo</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>?</kbd>
+                    <span>Show shortcuts</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
 </body>
+
 </html>

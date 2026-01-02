@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A modern, sleek todo application with dark and light theme support">
+    <title>Todo App | Stay Organized</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+    <div class="app-container">
+        <!-- Background Gradient Orbs -->
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+
+        <!-- Main Card -->
+        <div class="card">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="title">
+                        <span class="title-icon">✨</span>
+                        My Tasks
+                    </h1>
+                    <p class="subtitle">Stay organized, stay productive</p>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="theme-icon sun">☀️</span>
+                    <span class="theme-icon moon">🌙</span>
+                </button>
+            </header>
+
+            <!-- Add Todo Section -->
+            <div class="add-todo-section">
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        id="todoInput" 
+                        class="todo-input" 
+                        placeholder="What needs to be done?"
+                        autocomplete="off"
+                    >
+                    <button class="add-btn" id="addBtn" aria-label="Add todo">
+                        <span class="add-icon">+</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="active">Active</button>
+                <button class="filter-btn" data-filter="completed">Completed</button>
+            </div>
+
+            <!-- Todo List -->
+            <ul class="todo-list" id="todoList">
+                <!-- Todos will be dynamically added here -->
+            </ul>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon">📝</div>
+                <p class="empty-text">No tasks yet. Add one above!</p>
+            </div>
+
+            <!-- Footer Stats -->
+            <footer class="footer">
+                <span class="task-count" id="taskCount">0 tasks remaining</span>
+                <button class="clear-btn" id="clearCompleted">Clear Completed</button>
+            </footer>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

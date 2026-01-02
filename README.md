@@ -61,7 +61,7 @@ A sleek, feature-rich todo application built with plain HTML, CSS, and JavaScrip
 ## 📁 File Structure
 
 ```
-todo-app/
+Antigravity/
 ├── index.html      # Main HTML
 ├── style.css       # Styles & themes
 ├── script.js       # App logic

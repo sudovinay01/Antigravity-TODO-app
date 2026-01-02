@@ -1259,56 +1259,49 @@ function createTodoElement(todo) {
     }
 
     li.innerHTML = `
-        <div class="swipe-bg left">✓</div>
-        <div class="swipe-bg right">🗑️</div>
-        <div class="swipe-content">
-            <label class="todo-checkbox">
-                <input type="checkbox" ${todo.completed ? 'checked' : ''}>
-                <span class="checkmark"></span>
-            </label>
-            <div class="todo-content">
-                <div class="todo-main">
-                    <span class="todo-text">${escapeHtml(todo.text)}</span>
-                    ${progressHtml}
-                </div>
-                <div class="todo-meta">
-                    <span class="priority-badge ${todo.priority}">${todo.priority}</span>
-                    ${dueDateHtml}
-                    ${recurringHtml}
-                    ${reminderHtml}
-                    ${todo.category ? `<span class="category-badge">${escapeHtml(todo.category)}</span>` : ''}
-                </div>
-                ${subtasksHtml}
+        <label class="todo-checkbox">
+            <input type="checkbox" ${todo.completed ? 'checked' : ''}>
+            <span class="checkmark"></span>
+        </label>
+        <div class="todo-content">
+            <div class="todo-main">
+                <span class="todo-text">${escapeHtml(todo.text)}</span>
+                ${progressHtml}
             </div>
-            <div class="todo-actions">
-                <button class="todo-action-btn expand" title="Toggle subtasks">▼</button>
-                <button class="todo-action-btn archive" title="Archive">📦</button>
-                <button class="todo-action-btn delete" title="Delete">×</button>
+            <div class="todo-meta">
+                <span class="priority-badge ${todo.priority}">${todo.priority}</span>
+                ${dueDateHtml}
+                ${recurringHtml}
+                ${reminderHtml}
+                ${todo.category ? `<span class="category-badge">${escapeHtml(todo.category)}</span>` : ''}
             </div>
+            ${subtasksHtml}
+        </div>
+        <div class="todo-actions">
+            <button class="todo-action-btn archive" title="Archive">📦</button>
+            <button class="todo-action-btn delete" title="Delete">🗑️</button>
         </div>
     `;
 
     // Event Listeners
     const checkbox = li.querySelector('.todo-checkbox input');
     const textEl = li.querySelector('.todo-text');
-    const deleteBtn = li.querySelector('.todo-action-btn.delete');
-    const archiveBtn = li.querySelector('.todo-action-btn.archive');
-    const expandBtn = li.querySelector('.todo-action-btn.expand');
     const subtasksContainer = li.querySelector('.subtasks-container');
     const addSubtaskBtn = li.querySelector('.add-subtask-btn');
+    const deleteBtn = li.querySelector('.todo-action-btn.delete');
+    const archiveBtn = li.querySelector('.todo-action-btn.archive');
 
     checkbox.addEventListener('change', () => toggleTodo(todo.id));
     textEl.addEventListener('dblclick', () => editTodo(todo.id));
     deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
     archiveBtn.addEventListener('click', () => archiveTodo(todo.id));
 
-    expandBtn.addEventListener('click', () => {
-        const isHidden = subtasksContainer.style.display === 'none';
-        subtasksContainer.style.display = isHidden ? 'block' : 'none';
-        expandBtn.textContent = isHidden ? '▲' : '▼';
-    });
+    // Show subtasks if they exist
+    if (todo.subtasks && todo.subtasks.length > 0) {
+        subtasksContainer.style.display = 'block';
+    }
 
-    if (!isCompleted) {
+    if (!isCompleted && addSubtaskBtn) {
         addSubtaskBtn.addEventListener('click', () => showSubtaskInput(todo.id, subtasksContainer));
     }
 

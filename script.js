@@ -215,9 +215,129 @@ function init() {
     // Check reminders every minute
     setInterval(checkReminders, 60000);
 
-    // Register Service Worker for PWA
+    // Initialize PWA features
+    initPWA();
+}
+
+// ===================================
+// PWA Features
+// ===================================
+let deferredPrompt = null;
+const offlineBanner = document.getElementById('offlineBanner');
+const installBanner = document.getElementById('installBanner');
+const installBtn = document.getElementById('installBtn');
+const dismissInstall = document.getElementById('dismissInstall');
+
+function initPWA() {
+    // Register Service Worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').catch(() => { });
+        navigator.serviceWorker.register('sw.js')
+            .then((registration) => {
+                console.log('[PWA] Service Worker registered:', registration.scope);
+
+                // Check for updates
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            showToast('New version available! Refresh to update.');
+                        }
+                    });
+                });
+            })
+            .catch((error) => {
+                console.log('[PWA] Service Worker registration failed:', error);
+            });
+    }
+
+    // Offline/Online detection
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Check initial state
+    if (!navigator.onLine) {
+        handleOffline();
+    }
+
+    // Install prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+
+        // Check if user previously dismissed
+        const dismissed = localStorage.getItem('pwa-install-dismissed');
+        if (!dismissed) {
+            setTimeout(() => {
+                installBanner.classList.add('visible');
+            }, 3000); // Show after 3 seconds
+        }
+    });
+
+    // Install button handler
+    if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+
+            if (outcome === 'accepted') {
+                showToast('🎉 App installed successfully!');
+            }
+
+            deferredPrompt = null;
+            installBanner.classList.remove('visible');
+        });
+    }
+
+    // Dismiss install button
+    if (dismissInstall) {
+        dismissInstall.addEventListener('click', () => {
+            installBanner.classList.remove('visible');
+            localStorage.setItem('pwa-install-dismissed', 'true');
+        });
+    }
+
+    // Check if app is installed
+    window.addEventListener('appinstalled', () => {
+        installBanner.classList.remove('visible');
+        deferredPrompt = null;
+        showToast('🎉 App installed!');
+    });
+
+    // Update app badge when tasks change
+    updateAppBadge();
+}
+
+function handleOnline() {
+    offlineBanner.classList.remove('visible');
+    document.body.classList.remove('offline');
+    showToast('✅ Back online!');
+}
+
+function handleOffline() {
+    offlineBanner.classList.add('visible');
+    document.body.classList.add('offline');
+}
+
+function updateAppBadge() {
+    const activeTasks = todos.filter(t => !t.completed).length;
+
+    // Update via service worker
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+            type: 'UPDATE_BADGE',
+            count: activeTasks
+        });
+    }
+
+    // Direct badge API (if available)
+    if ('setAppBadge' in navigator) {
+        if (activeTasks > 0) {
+            navigator.setAppBadge(activeTasks).catch(() => { });
+        } else {
+            navigator.clearAppBadge().catch(() => { });
+        }
     }
 }
 
@@ -352,6 +472,9 @@ function saveTodos() {
     localStorage.setItem('todos', JSON.stringify(todos));
     localStorage.setItem('archivedTodos', JSON.stringify(archivedTodos));
     localStorage.setItem('trashedTodos', JSON.stringify(trashedTodos));
+
+    // Update PWA app badge
+    updateAppBadge();
 }
 
 function addTodo() {

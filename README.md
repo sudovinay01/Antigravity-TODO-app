@@ -2,8 +2,6 @@
 
 A sleek, feature-rich todo application built with plain HTML, CSS, and JavaScript. No frameworks required!
 
-![Todo App Demo](demo.webp)
-
 ## ✨ Features
 
 ### Core Functionality

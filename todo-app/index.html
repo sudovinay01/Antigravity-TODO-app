@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="description" content="A modern, sleek todo application with dark and light theme support">
     <meta name="theme-color" content="#6366f1">
     <title>Todo App | Stay Organized</title>
@@ -35,7 +35,7 @@
                 <div class="header-right">
                     <div class="search-wrapper">
                         <span class="search-icon">🔍</span>
-                        <input type="text" id="searchInput" class="search-input" placeholder="Search tasks...">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search...">
                     </div>
                     <button class="icon-btn" id="soundToggle" aria-label="Toggle sound" title="Toggle sound">
                         <span class="sound-on">🔊</span>
@@ -69,9 +69,22 @@
                         <input type="date" id="dueDateInput" class="option-input date-input" title="Due date">
                     </div>
                     <div class="option-group">
+                        <select id="recurringSelect" class="option-select">
+                            <option value="">🔄 Once</option>
+                            <option value="daily">📅 Daily</option>
+                            <option value="weekly">📆 Weekly</option>
+                            <option value="monthly">🗓️ Monthly</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="options-row">
+                    <div class="option-group">
                         <input type="text" id="categoryInput" class="option-input category-input" placeholder="Category"
                             list="categoryList">
                         <datalist id="categoryList"></datalist>
+                    </div>
+                    <div class="option-group">
+                        <input type="time" id="reminderInput" class="option-input" title="Reminder time">
                     </div>
                 </div>
             </div>
@@ -81,16 +94,15 @@
                 <div class="filter-tabs">
                     <button class="filter-btn active" data-filter="all">All</button>
                     <button class="filter-btn" data-filter="active">Active</button>
-                    <button class="filter-btn" data-filter="completed">Completed</button>
+                    <button class="filter-btn" data-filter="completed">Done</button>
                 </div>
                 <div class="action-btns">
-                    <button class="action-btn" id="exportBtn" title="Export todos">
-                        <span>📤</span> Export
-                    </button>
-                    <button class="action-btn" id="importBtn" title="Import todos">
-                        <span>📥</span> Import
-                    </button>
-                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                    <select id="sortSelect" class="sort-select" title="Sort by">
+                        <option value="created">📅 Created</option>
+                        <option value="dueDate">⏰ Due Date</option>
+                        <option value="priority">🎯 Priority</option>
+                        <option value="alpha">🔤 A-Z</option>
+                    </select>
                 </div>
             </div>
 
@@ -113,7 +125,18 @@
             <!-- Footer Stats -->
             <footer class="footer">
                 <span class="task-count" id="taskCount">0 tasks remaining</span>
-                <button class="clear-btn" id="clearCompleted">Clear Completed</button>
+                <div class="footer-actions">
+                    <button class="footer-btn" id="archiveViewBtn" title="View archive">
+                        📦 <span class="badge" id="archiveBadge">0</span>
+                    </button>
+                    <button class="footer-btn" id="trashViewBtn" title="View trash">
+                        🗑️ <span class="badge" id="trashBadge">0</span>
+                    </button>
+                    <button class="footer-btn" id="exportBtn" title="Export">📤</button>
+                    <button class="footer-btn" id="importBtn" title="Import">📥</button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                    <button class="clear-btn" id="clearCompleted">Clear Done</button>
+                </div>
             </footer>
         </div>
 
@@ -121,10 +144,45 @@
         <div class="toast-container" id="toastContainer"></div>
     </div>
 
-    <!-- Audio Elements -->
-    <audio id="soundAdd" preload="auto">
-        <source src="data:audio/wav;base64,UklGRl9vT19teleWAQAAAAAAAABBAAAAAAAAAAAAAAAA" type="audio/wav">
-    </audio>
+    <!-- Archive Modal -->
+    <div class="modal" id="archiveModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>📦 Archived Tasks</h2>
+                <button class="modal-close" id="closeArchive">×</button>
+            </div>
+            <div class="modal-body">
+                <ul class="archive-list" id="archiveList"></ul>
+                <div class="empty-state visible" id="archiveEmpty">
+                    <div class="empty-icon">📦</div>
+                    <p class="empty-text">No archived tasks</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trash Modal -->
+    <div class="modal" id="trashModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>🗑️ Trash</h2>
+                <div class="modal-header-actions">
+                    <button class="danger-btn" id="emptyTrash">Empty Trash</button>
+                </div>
+                <button class="modal-close" id="closeTrash">×</button>
+            </div>
+            <div class="modal-body">
+                <ul class="trash-list" id="trashList"></ul>
+                <div class="empty-state visible" id="trashEmpty">
+                    <div class="empty-icon">🗑️</div>
+                    <p class="empty-text">Trash is empty</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <p class="trash-info">Items are permanently deleted after 30 days</p>
+            </div>
+        </div>
+    </div>
 
     <!-- Keyboard Shortcuts Modal -->
     <div class="modal" id="shortcutsModal">

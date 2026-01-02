@@ -6,28 +6,41 @@ A sleek, feature-rich todo application built with plain HTML, CSS, and JavaScrip
 
 ## ✨ Features
 
-### Core Features
-- ✏️ **Edit Todos** - Double-click any task to edit inline
+### Core Functionality
+- ✏️ **Add/Edit Todos** - Double-click to edit inline
 - 🔄 **Drag & Drop** - Reorder tasks by dragging
-- 📅 **Due Dates** - Set deadlines with visual indicators (overdue, today, tomorrow)
-- 🎯 **Priority Levels** - High (🔴), Medium (🟡), Low (🟢) with color coding
+- 📅 **Due Dates** - With overdue/today/tomorrow indicators
+- 🎯 **Priority Levels** - High 🔴, Medium 🟡, Low 🟢
 
-### UX Improvements
-- ↩️ **Undo Delete** - Toast notification with 5-second undo window
-- 🔍 **Search** - Real-time search across tasks and categories
-- ⌨️ **Keyboard Shortcuts** - `Ctrl+F` search, `Ctrl+N` new task, `?` help
-- 🔊 **Sound Effects** - Satisfying audio feedback (toggleable)
+### Task Management
+- 📋 **Subtasks** - Nested checklists with progress tracking
+- 🔒 **Subtask Completion Required** - Main task can't complete until subtasks done
+- ✏️ **Edit Subtasks** - Double-click to edit subtask text
+- 🔄 **Recurring Tasks** - Daily, weekly, or monthly
+- ⏰ **Reminders** - Browser notifications at set times
 
-### Advanced Features
-- 🏷️ **Categories** - Organize tasks with tags and filter by category
-- 📋 **Subtasks** - Nested checklists with progress indicators
-- 📤 **Export/Import** - Backup and restore todos as JSON
-- 📱 **PWA Support** - Install as app, works offline
+### Organization
+- 🏷️ **Categories** - Tag tasks and filter by category
+- 🔍 **Search** - Real-time filtering across tasks
+- 📊 **Sort Options** - By date, priority, or alphabetically
+- 📦 **Archive** - Store completed tasks for later reference
+- 🗑️ **Trash** - Delete with 30-day recovery
+
+### UX & Mobile
+- ↩️ **Undo Delete** - Toast notification with 5-second undo
+- ⌨️ **Keyboard Shortcuts** - Ctrl+F, Ctrl+N, ?
+- 🔊 **Sound Effects** - Toggleable audio feedback
+- 👆 **Touch Gestures** - Swipe to complete/delete on mobile
+- 📱 **Responsive** - Optimized for all screen sizes
 
 ### Design
-- 🌗 **Dark/Light Theme** - Smooth animated theme toggle
+- 🌗 **Auto Theme** - Follows system preference (or manual toggle)
 - 🎨 **Glassmorphism UI** - Modern design with backdrop blur
-- ✨ **Animations** - Micro-interactions throughout
+- ✨ **Animations** - Smooth micro-interactions
+
+### Data
+- 📤 **Export/Import** - Backup and restore as JSON
+- 📲 **PWA Support** - Install as app, works offline
 
 ## 🚀 Getting Started
 
@@ -54,7 +67,6 @@ todo-app/
 ├── script.js       # App logic
 ├── manifest.json   # PWA manifest
 ├── sw.js          # Service worker
-├── demo.webp      # Demo recording
 └── README.md      # This file
 ```
 
@@ -64,4 +76,4 @@ Works in all modern browsers: Chrome, Firefox, Safari, Edge
 
 ## 📄 License
 
-MIT License - Feel free to use for learning or personal projects!
+MIT License

@@ -1,6 +1,6 @@
 // ===================================
-// Todo App - Enhanced JavaScript
-// All 12 features implemented
+// Todo App - Phase 2 JavaScript
+// All features + bug fixes
 // ===================================
 
 // DOM Elements
@@ -18,6 +18,9 @@ const dueDateInput = document.getElementById('dueDateInput');
 const categoryInput = document.getElementById('categoryInput');
 const categoryList = document.getElementById('categoryList');
 const categoryFilter = document.getElementById('categoryFilter');
+const recurringSelect = document.getElementById('recurringSelect');
+const reminderInput = document.getElementById('reminderInput');
+const sortSelect = document.getElementById('sortSelect');
 const exportBtn = document.getElementById('exportBtn');
 const importBtn = document.getElementById('importBtn');
 const importFile = document.getElementById('importFile');
@@ -25,63 +28,95 @@ const toastContainer = document.getElementById('toastContainer');
 const soundToggle = document.getElementById('soundToggle');
 const shortcutsModal = document.getElementById('shortcutsModal');
 const closeShortcuts = document.getElementById('closeShortcuts');
+const archiveModal = document.getElementById('archiveModal');
+const archiveList = document.getElementById('archiveList');
+const archiveEmpty = document.getElementById('archiveEmpty');
+const archiveViewBtn = document.getElementById('archiveViewBtn');
+const archiveBadge = document.getElementById('archiveBadge');
+const closeArchive = document.getElementById('closeArchive');
+const trashModal = document.getElementById('trashModal');
+const trashList = document.getElementById('trashList');
+const trashEmpty = document.getElementById('trashEmpty');
+const trashViewBtn = document.getElementById('trashViewBtn');
+const trashBadge = document.getElementById('trashBadge');
+const closeTrash = document.getElementById('closeTrash');
+const emptyTrash = document.getElementById('emptyTrash');
 
 // State
 let todos = [];
+let archivedTodos = [];
+let trashedTodos = [];
 let currentFilter = 'all';
 let currentCategory = 'all';
+let currentSort = 'created';
 let searchQuery = '';
 let lastDeleted = null;
 let undoTimeout = null;
 let soundEnabled = true;
 let draggedItem = null;
 
+// Touch state
+let touchStartX = 0;
+let touchCurrentX = 0;
+let isSwiping = false;
+
 // Sound Effects (Web Audio API)
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+let audioContext = null;
+
+function getAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioContext;
+}
 
 function playSound(type) {
     if (!soundEnabled) return;
 
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    try {
+        const ctx = getAudioContext();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
 
-    switch (type) {
-        case 'add':
-            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.15);
-            break;
-        case 'complete':
-            oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(900, audioContext.currentTime + 0.1);
-            oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.2);
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.25);
-            break;
-        case 'delete':
-            oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.15);
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.15);
-            break;
-        case 'undo':
-            oscillator.frequency.setValueAtTime(500, audioContext.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.1);
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.1);
-            break;
+        switch (type) {
+            case 'add':
+                oscillator.frequency.setValueAtTime(800, ctx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                oscillator.start(ctx.currentTime);
+                oscillator.stop(ctx.currentTime + 0.15);
+                break;
+            case 'complete':
+                oscillator.frequency.setValueAtTime(600, ctx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                oscillator.start(ctx.currentTime);
+                oscillator.stop(ctx.currentTime + 0.25);
+                break;
+            case 'delete':
+                oscillator.frequency.setValueAtTime(400, ctx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.15);
+                gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                oscillator.start(ctx.currentTime);
+                oscillator.stop(ctx.currentTime + 0.15);
+                break;
+            case 'undo':
+                oscillator.frequency.setValueAtTime(500, ctx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                oscillator.start(ctx.currentTime);
+                oscillator.stop(ctx.currentTime + 0.1);
+                break;
+        }
+    } catch (e) {
+        // Audio not available
     }
 }
 
@@ -92,10 +127,13 @@ function init() {
     loadTodos();
     loadTheme();
     loadSoundPreference();
+    cleanupTrash();
+    checkReminders();
     renderTodos();
     updateTaskCount();
     updateCategoryFilter();
     updateCategoryDatalist();
+    updateBadges();
 
     // Event Listeners
     addBtn.addEventListener('click', addTodo);
@@ -103,7 +141,7 @@ function init() {
         if (e.key === 'Enter') addTodo();
     });
 
-    clearCompleted.addEventListener('click', clearCompletedTodos);
+    clearCompleted.addEventListener('click', archiveCompletedTodos);
     themeToggle.addEventListener('click', toggleTheme);
     soundToggle.addEventListener('click', toggleSound);
 
@@ -116,28 +154,56 @@ function init() {
         renderTodos();
     });
 
+    sortSelect.addEventListener('change', (e) => {
+        currentSort = e.target.value;
+        renderTodos();
+    });
+
     exportBtn.addEventListener('click', exportTodos);
     importBtn.addEventListener('click', () => importFile.click());
     importFile.addEventListener('change', importTodos);
 
-    closeShortcuts.addEventListener('click', () => {
-        shortcutsModal.classList.remove('visible');
+    // Archive modal
+    archiveViewBtn.addEventListener('click', () => {
+        renderArchive();
+        archiveModal.classList.add('visible');
+    });
+    closeArchive.addEventListener('click', () => archiveModal.classList.remove('visible'));
+    archiveModal.addEventListener('click', (e) => {
+        if (e.target === archiveModal) archiveModal.classList.remove('visible');
     });
 
+    // Trash modal
+    trashViewBtn.addEventListener('click', () => {
+        renderTrash();
+        trashModal.classList.add('visible');
+    });
+    closeTrash.addEventListener('click', () => trashModal.classList.remove('visible'));
+    trashModal.addEventListener('click', (e) => {
+        if (e.target === trashModal) trashModal.classList.remove('visible');
+    });
+    emptyTrash.addEventListener('click', emptyTrashBin);
+
+    // Shortcuts modal
+    closeShortcuts.addEventListener('click', () => shortcutsModal.classList.remove('visible'));
     shortcutsModal.addEventListener('click', (e) => {
-        if (e.target === shortcutsModal) {
-            shortcutsModal.classList.remove('visible');
-        }
+        if (e.target === shortcutsModal) shortcutsModal.classList.remove('visible');
     });
 
     // Keyboard Shortcuts
     document.addEventListener('keydown', handleKeyboardShortcuts);
 
+    // Request notification permission
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+
+    // Check reminders every minute
+    setInterval(checkReminders, 60000);
+
     // Register Service Worker for PWA
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').catch(() => {
-            // Service worker registration failed, app still works
-        });
+        navigator.serviceWorker.register('sw.js').catch(() => { });
     }
 }
 
@@ -145,11 +211,8 @@ function init() {
 // Keyboard Shortcuts
 // ===================================
 function handleKeyboardShortcuts(e) {
-    // Don't trigger shortcuts when typing in inputs
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-        if (e.key === 'Escape') {
-            e.target.blur();
-        }
+        if (e.key === 'Escape') e.target.blur();
         return;
     }
 
@@ -168,6 +231,8 @@ function handleKeyboardShortcuts(e) {
         shortcutsModal.classList.add('visible');
     } else if (e.key === 'Escape') {
         shortcutsModal.classList.remove('visible');
+        archiveModal.classList.remove('visible');
+        trashModal.classList.remove('visible');
     }
 }
 
@@ -175,8 +240,23 @@ function handleKeyboardShortcuts(e) {
 // Theme Functions
 // ===================================
 function loadTheme() {
-    const savedTheme = localStorage.getItem('todo-theme') || 'dark';
-    document.body.setAttribute('data-theme', savedTheme);
+    // Check for saved preference, then system preference
+    const savedTheme = localStorage.getItem('todo-theme');
+
+    if (savedTheme) {
+        document.body.setAttribute('data-theme', savedTheme);
+    } else {
+        // Auto-detect system preference
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.body.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    }
+
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('todo-theme')) {
+            document.body.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+        }
+    });
 }
 
 function toggleTheme() {
@@ -187,9 +267,7 @@ function toggleTheme() {
     localStorage.setItem('todo-theme', newTheme);
 
     themeToggle.style.transform = 'scale(0.9)';
-    setTimeout(() => {
-        themeToggle.style.transform = 'scale(1)';
-    }, 150);
+    setTimeout(() => themeToggle.style.transform = 'scale(1)', 150);
 }
 
 // ===================================
@@ -217,21 +295,29 @@ function updateSoundButton() {
 // ===================================
 function loadTodos() {
     const savedTodos = localStorage.getItem('todos');
+    const savedArchive = localStorage.getItem('archivedTodos');
+    const savedTrash = localStorage.getItem('trashedTodos');
+
     if (savedTodos) {
-        todos = JSON.parse(savedTodos);
-        // Migrate old todos without new fields
-        todos = todos.map(todo => ({
+        todos = JSON.parse(savedTodos).map(todo => ({
             priority: 'low',
             dueDate: null,
             category: null,
             subtasks: [],
+            recurring: null,
+            reminderTime: null,
             ...todo
         }));
     }
+
+    if (savedArchive) archivedTodos = JSON.parse(savedArchive);
+    if (savedTrash) trashedTodos = JSON.parse(savedTrash);
 }
 
 function saveTodos() {
     localStorage.setItem('todos', JSON.stringify(todos));
+    localStorage.setItem('archivedTodos', JSON.stringify(archivedTodos));
+    localStorage.setItem('trashedTodos', JSON.stringify(trashedTodos));
 }
 
 function addTodo() {
@@ -239,9 +325,7 @@ function addTodo() {
 
     if (!text) {
         todoInput.style.animation = 'shake 0.3s ease';
-        setTimeout(() => {
-            todoInput.style.animation = '';
-        }, 300);
+        setTimeout(() => todoInput.style.animation = '', 300);
         return;
     }
 
@@ -253,7 +337,9 @@ function addTodo() {
         priority: prioritySelect.value,
         dueDate: dueDateInput.value || null,
         category: categoryInput.value.trim() || null,
-        subtasks: []
+        subtasks: [],
+        recurring: recurringSelect.value || null,
+        reminderTime: reminderInput.value || null
     };
 
     todos.unshift(todo);
@@ -268,20 +354,76 @@ function addTodo() {
     prioritySelect.value = 'low';
     dueDateInput.value = '';
     categoryInput.value = '';
+    recurringSelect.value = '';
+    reminderInput.value = '';
     todoInput.focus();
 
     playSound('add');
+
+    // Schedule reminder if set
+    if (todo.reminderTime && todo.dueDate) {
+        scheduleReminder(todo);
+    }
 }
 
 function toggleTodo(id) {
     const todo = todos.find(t => t.id === id);
-    if (todo) {
-        todo.completed = !todo.completed;
-        saveTodos();
-        renderTodos();
-        updateTaskCount();
-        if (todo.completed) playSound('complete');
+    if (!todo) return;
+
+    // BUG FIX: Don't allow completing if subtasks are incomplete
+    if (!todo.completed && todo.subtasks && todo.subtasks.length > 0) {
+        const incompleteSubtasks = todo.subtasks.filter(s => !s.completed);
+        if (incompleteSubtasks.length > 0) {
+            showToast(`Complete all ${incompleteSubtasks.length} subtask(s) first!`);
+            return;
+        }
     }
+
+    todo.completed = !todo.completed;
+
+    // Handle recurring tasks
+    if (todo.completed && todo.recurring) {
+        createRecurringTask(todo);
+    }
+
+    saveTodos();
+    renderTodos();
+    updateTaskCount();
+    if (todo.completed) playSound('complete');
+}
+
+function createRecurringTask(originalTodo) {
+    const newDueDate = getNextRecurringDate(originalTodo.dueDate, originalTodo.recurring);
+
+    const newTodo = {
+        ...originalTodo,
+        id: Date.now(),
+        completed: false,
+        createdAt: new Date().toISOString(),
+        dueDate: newDueDate,
+        subtasks: originalTodo.subtasks.map(s => ({ ...s, completed: false }))
+    };
+
+    todos.unshift(newTodo);
+    showToast(`Recurring task created for ${formatDate(newDueDate)}`);
+}
+
+function getNextRecurringDate(currentDate, recurring) {
+    const date = currentDate ? new Date(currentDate) : new Date();
+
+    switch (recurring) {
+        case 'daily':
+            date.setDate(date.getDate() + 1);
+            break;
+        case 'weekly':
+            date.setDate(date.getDate() + 7);
+            break;
+        case 'monthly':
+            date.setMonth(date.getMonth() + 1);
+            break;
+    }
+
+    return date.toISOString().split('T')[0];
 }
 
 function deleteTodo(id) {
@@ -291,31 +433,27 @@ function deleteTodo(id) {
     const deletedTodo = todos[todoIndex];
     const todoElement = document.querySelector(`[data-id="${id}"]`);
 
-    // Store for undo
-    lastDeleted = { todo: deletedTodo, index: todoIndex };
-
-    // Clear previous undo timeout
-    if (undoTimeout) clearTimeout(undoTimeout);
-
-    // Animate out
     if (todoElement) {
         todoElement.style.animation = 'slideOut 0.3s ease forwards';
     }
 
     setTimeout(() => {
+        // Move to trash instead of permanent delete
+        deletedTodo.deletedAt = new Date().toISOString();
+        trashedTodos.unshift(deletedTodo);
         todos.splice(todoIndex, 1);
+
         saveTodos();
         renderTodos();
         updateTaskCount();
         updateCategoryFilter();
+        updateBadges();
 
-        // Show undo toast
-        showToast('Task deleted', true);
+        showToast('Task moved to trash', true);
+        lastDeleted = { todo: deletedTodo, index: todoIndex };
 
-        // Auto-clear undo after 5 seconds
-        undoTimeout = setTimeout(() => {
-            lastDeleted = null;
-        }, 5000);
+        if (undoTimeout) clearTimeout(undoTimeout);
+        undoTimeout = setTimeout(() => lastDeleted = null, 5000);
     }, 280);
 
     playSound('delete');
@@ -324,22 +462,112 @@ function deleteTodo(id) {
 function undoDelete() {
     if (!lastDeleted) return;
 
+    // Remove from trash and restore
+    const trashIndex = trashedTodos.findIndex(t => t.id === lastDeleted.todo.id);
+    if (trashIndex !== -1) {
+        trashedTodos.splice(trashIndex, 1);
+    }
+
+    delete lastDeleted.todo.deletedAt;
     todos.splice(lastDeleted.index, 0, lastDeleted.todo);
+
     saveTodos();
     renderTodos();
     updateTaskCount();
     updateCategoryFilter();
+    updateBadges();
 
     lastDeleted = null;
     if (undoTimeout) clearTimeout(undoTimeout);
 
-    // Highlight restored item
-    setTimeout(() => {
-        const restored = document.querySelector(`[data-id="${lastDeleted?.todo?.id || todos[0]?.id}"]`);
-        if (restored) restored.classList.add('highlight');
-    }, 100);
-
     playSound('undo');
+}
+
+function archiveTodo(id) {
+    const todoIndex = todos.findIndex(t => t.id === id);
+    if (todoIndex === -1) return;
+
+    const todo = todos[todoIndex];
+    todo.archivedAt = new Date().toISOString();
+    archivedTodos.unshift(todo);
+    todos.splice(todoIndex, 1);
+
+    saveTodos();
+    renderTodos();
+    updateTaskCount();
+    updateBadges();
+
+    showToast('Task archived');
+}
+
+function restoreFromArchive(id) {
+    const index = archivedTodos.findIndex(t => t.id === id);
+    if (index === -1) return;
+
+    const todo = archivedTodos[index];
+    delete todo.archivedAt;
+    todo.completed = false;
+    todos.unshift(todo);
+    archivedTodos.splice(index, 1);
+
+    saveTodos();
+    renderTodos();
+    renderArchive();
+    updateTaskCount();
+    updateBadges();
+
+    showToast('Task restored');
+}
+
+function restoreFromTrash(id) {
+    const index = trashedTodos.findIndex(t => t.id === id);
+    if (index === -1) return;
+
+    const todo = trashedTodos[index];
+    delete todo.deletedAt;
+    todos.unshift(todo);
+    trashedTodos.splice(index, 1);
+
+    saveTodos();
+    renderTodos();
+    renderTrash();
+    updateTaskCount();
+    updateBadges();
+
+    showToast('Task restored');
+}
+
+function permanentlyDelete(id) {
+    const index = trashedTodos.findIndex(t => t.id === id);
+    if (index !== -1) {
+        trashedTodos.splice(index, 1);
+        saveTodos();
+        renderTrash();
+        updateBadges();
+    }
+}
+
+function emptyTrashBin() {
+    if (trashedTodos.length === 0) return;
+
+    if (confirm('Permanently delete all items in trash?')) {
+        trashedTodos = [];
+        saveTodos();
+        renderTrash();
+        updateBadges();
+        showToast('Trash emptied');
+    }
+}
+
+function cleanupTrash() {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    trashedTodos = trashedTodos.filter(todo => {
+        return new Date(todo.deletedAt) > thirtyDaysAgo;
+    });
+
+    saveTodos();
 }
 
 function editTodo(id) {
@@ -350,7 +578,6 @@ function editTodo(id) {
     const textElement = todoElement.querySelector('.todo-text');
     const currentText = todo.text;
 
-    // Replace text with input
     const input = document.createElement('input');
     input.type = 'text';
     input.className = 'todo-edit-input';
@@ -371,35 +598,33 @@ function editTodo(id) {
 
     input.addEventListener('blur', saveEdit);
     input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            input.blur();
-        } else if (e.key === 'Escape') {
+        if (e.key === 'Enter') input.blur();
+        else if (e.key === 'Escape') {
             input.value = currentText;
             input.blur();
         }
     });
 }
 
-function clearCompletedTodos() {
-    const completedItems = document.querySelectorAll('.todo-item.completed');
+function archiveCompletedTodos() {
+    const completedTodos = todos.filter(t => t.completed);
 
-    if (completedItems.length === 0) return;
+    if (completedTodos.length === 0) return;
 
-    completedItems.forEach((item, index) => {
-        setTimeout(() => {
-            item.style.animation = 'slideOut 0.3s ease forwards';
-        }, index * 50);
+    completedTodos.forEach(todo => {
+        todo.archivedAt = new Date().toISOString();
+        archivedTodos.unshift(todo);
     });
 
-    setTimeout(() => {
-        todos = todos.filter(t => !t.completed);
-        saveTodos();
-        renderTodos();
-        updateTaskCount();
-        updateCategoryFilter();
-        showToast(`${completedItems.length} task(s) cleared`);
-    }, completedItems.length * 50 + 280);
+    todos = todos.filter(t => !t.completed);
 
+    saveTodos();
+    renderTodos();
+    updateTaskCount();
+    updateCategoryFilter();
+    updateBadges();
+
+    showToast(`${completedTodos.length} task(s) archived`);
     playSound('delete');
 }
 
@@ -407,12 +632,18 @@ function clearCompletedTodos() {
 // Subtasks
 // ===================================
 function showSubtaskInput(todoId, containerElement) {
-    // Check if input already exists
+    const todo = todos.find(t => t.id === todoId);
+
+    // BUG FIX: Don't allow adding subtasks to completed tasks
+    if (todo && todo.completed) {
+        showToast('Cannot add subtasks to completed task');
+        return;
+    }
+
     if (containerElement.querySelector('.subtask-input-wrapper')) return;
 
     const addBtn = containerElement.querySelector('.add-subtask-btn');
 
-    // Create input wrapper
     const wrapper = document.createElement('div');
     wrapper.className = 'subtask-input-wrapper';
     wrapper.innerHTML = `
@@ -421,7 +652,6 @@ function showSubtaskInput(todoId, containerElement) {
         <button class="subtask-input-btn cancel">✕</button>
     `;
 
-    // Insert before the add button
     addBtn.parentNode.insertBefore(wrapper, addBtn);
 
     const input = wrapper.querySelector('.subtask-input');
@@ -447,11 +677,8 @@ function showSubtaskInput(todoId, containerElement) {
     cancelBtn.addEventListener('click', cancelInput);
 
     input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            saveSubtask();
-        } else if (e.key === 'Escape') {
-            cancelInput();
-        }
+        if (e.key === 'Enter') saveSubtask();
+        else if (e.key === 'Escape') cancelInput();
     });
 }
 
@@ -492,6 +719,136 @@ function deleteSubtask(todoId, subtaskId) {
     renderTodos();
 }
 
+function editSubtask(todoId, subtaskId) {
+    const todo = todos.find(t => t.id === todoId);
+    if (!todo) return;
+
+    const subtask = todo.subtasks.find(s => s.id === subtaskId);
+    if (!subtask) return;
+
+    const subtaskElement = document.querySelector(`[data-subtask-id="${subtaskId}"]`);
+    const textElement = subtaskElement.querySelector('.subtask-text');
+    const currentText = subtask.text;
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'subtask-edit-input';
+    input.value = currentText;
+
+    textElement.replaceWith(input);
+    input.focus();
+    input.select();
+
+    function saveEdit() {
+        const newText = input.value.trim();
+        if (newText && newText !== currentText) {
+            subtask.text = newText;
+            saveTodos();
+        }
+        renderTodos();
+    }
+
+    input.addEventListener('blur', saveEdit);
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') input.blur();
+        else if (e.key === 'Escape') {
+            input.value = currentText;
+            input.blur();
+        }
+    });
+}
+
+// ===================================
+// Reminders
+// ===================================
+function checkReminders() {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+    const now = new Date();
+    const currentTime = now.toTimeString().slice(0, 5);
+    const currentDate = now.toISOString().split('T')[0];
+
+    todos.forEach(todo => {
+        if (!todo.completed && todo.reminderTime && todo.dueDate === currentDate) {
+            if (todo.reminderTime === currentTime && !todo.reminded) {
+                showNotification(todo);
+                todo.reminded = true;
+                saveTodos();
+            }
+        }
+    });
+}
+
+function showNotification(todo) {
+    if (Notification.permission === 'granted') {
+        new Notification('Todo Reminder', {
+            body: todo.text,
+            icon: '✨',
+            tag: `todo-${todo.id}`
+        });
+    }
+}
+
+function scheduleReminder(todo) {
+    // Reminders are handled by the interval check
+    showToast(`Reminder set for ${todo.reminderTime}`);
+}
+
+// ===================================
+// Touch Gestures (Swipe)
+// ===================================
+function handleTouchStart(e, todoId) {
+    touchStartX = e.touches[0].clientX;
+    isSwiping = false;
+}
+
+function handleTouchMove(e, element) {
+    if (!touchStartX) return;
+
+    touchCurrentX = e.touches[0].clientX;
+    const diff = touchCurrentX - touchStartX;
+
+    if (Math.abs(diff) > 30) {
+        isSwiping = true;
+        element.classList.add('swiping');
+
+        const swipeContent = element.querySelector('.swipe-content');
+        const maxSwipe = 80;
+        const swipeAmount = Math.max(-maxSwipe, Math.min(maxSwipe, diff));
+
+        if (swipeContent) {
+            swipeContent.style.transform = `translateX(${swipeAmount}px)`;
+        }
+    }
+}
+
+function handleTouchEnd(e, todoId, element) {
+    if (!isSwiping) {
+        touchStartX = 0;
+        return;
+    }
+
+    const diff = touchCurrentX - touchStartX;
+    const swipeContent = element.querySelector('.swipe-content');
+
+    if (diff > 80) {
+        // Swipe right - complete
+        toggleTodo(todoId);
+    } else if (diff < -80) {
+        // Swipe left - delete
+        deleteTodo(todoId);
+    }
+
+    // Reset
+    element.classList.remove('swiping');
+    if (swipeContent) {
+        swipeContent.style.transform = '';
+    }
+    touchStartX = 0;
+    touchCurrentX = 0;
+    isSwiping = false;
+}
+
 // ===================================
 // Drag and Drop
 // ===================================
@@ -506,9 +863,7 @@ function handleDragEnd(e) {
         draggedItem.classList.remove('dragging');
         draggedItem = null;
     }
-    document.querySelectorAll('.drag-over').forEach(el => {
-        el.classList.remove('drag-over');
-    });
+    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
 }
 
 function handleDragOver(e) {
@@ -521,9 +876,7 @@ function handleDragOver(e) {
 
 function handleDragLeave(e) {
     const item = e.target.closest('.todo-item');
-    if (item) {
-        item.classList.remove('drag-over');
-    }
+    if (item) item.classList.remove('drag-over');
 }
 
 function handleDrop(e) {
@@ -540,7 +893,6 @@ function handleDrop(e) {
 
     if (draggedIndex === -1 || dropIndex === -1) return;
 
-    // Reorder
     const [removed] = todos.splice(draggedIndex, 1);
     todos.splice(dropIndex, 0, removed);
 
@@ -551,25 +903,19 @@ function handleDrop(e) {
 }
 
 // ===================================
-// Filter Functions
+// Filter & Sort Functions
 // ===================================
 function setFilter(filter) {
     currentFilter = filter;
-
-    filterBtns.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.filter === filter);
-    });
-
+    filterBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.filter === filter));
     renderTodos();
 }
 
 function setCategoryFilter(category) {
     currentCategory = category;
-
     document.querySelectorAll('.category-pill').forEach(pill => {
         pill.classList.toggle('active', pill.dataset.category === category);
     });
-
     renderTodos();
 }
 
@@ -599,7 +945,38 @@ function getFilteredTodos() {
         );
     }
 
+    // Sort
+    filtered = sortTodos(filtered);
+
     return filtered;
+}
+
+function sortTodos(todosArray) {
+    const sorted = [...todosArray];
+
+    switch (currentSort) {
+        case 'dueDate':
+            sorted.sort((a, b) => {
+                if (!a.dueDate && !b.dueDate) return 0;
+                if (!a.dueDate) return 1;
+                if (!b.dueDate) return -1;
+                return new Date(a.dueDate) - new Date(b.dueDate);
+            });
+            break;
+        case 'priority':
+            const priorityOrder = { high: 0, medium: 1, low: 2 };
+            sorted.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+            break;
+        case 'alpha':
+            sorted.sort((a, b) => a.text.localeCompare(b.text));
+            break;
+        case 'created':
+        default:
+            // Already in creation order (newest first)
+            break;
+    }
+
+    return sorted;
 }
 
 // ===================================
@@ -643,14 +1020,21 @@ function updateCategoryDatalist() {
     });
 }
 
+function updateBadges() {
+    archiveBadge.textContent = archivedTodos.length;
+    trashBadge.textContent = trashedTodos.length;
+}
+
 // ===================================
 // Export/Import
 // ===================================
 function exportTodos() {
     const data = {
-        todos: todos,
+        todos,
+        archivedTodos,
+        trashedTodos,
         exportDate: new Date().toISOString(),
-        version: '2.0'
+        version: '3.0'
     };
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -662,7 +1046,7 @@ function exportTodos() {
     a.click();
 
     URL.revokeObjectURL(url);
-    showToast('Todos exported successfully!');
+    showToast('Todos exported!');
 }
 
 function importTodos(e) {
@@ -675,28 +1059,31 @@ function importTodos(e) {
             const data = JSON.parse(event.target.result);
 
             if (data.todos && Array.isArray(data.todos)) {
-                // Merge with existing todos
                 const existingIds = new Set(todos.map(t => t.id));
                 const newTodos = data.todos.filter(t => !existingIds.has(t.id));
 
                 todos = [...newTodos, ...todos];
+
+                if (data.archivedTodos) {
+                    archivedTodos = [...data.archivedTodos, ...archivedTodos];
+                }
+
                 saveTodos();
                 renderTodos();
                 updateTaskCount();
                 updateCategoryFilter();
                 updateCategoryDatalist();
+                updateBadges();
 
-                showToast(`Imported ${newTodos.length} new task(s)!`);
+                showToast(`Imported ${newTodos.length} task(s)!`);
             } else {
                 throw new Error('Invalid format');
             }
         } catch (err) {
-            showToast('Failed to import. Invalid file format.');
+            showToast('Failed to import. Invalid file.');
         }
     };
     reader.readAsText(file);
-
-    // Reset file input
     e.target.value = '';
 }
 
@@ -704,7 +1091,6 @@ function importTodos(e) {
 // Toast Notifications
 // ===================================
 function showToast(message, showUndo = false) {
-    // Remove existing toasts
     toastContainer.querySelectorAll('.toast').forEach(toast => {
         toast.classList.add('hiding');
         setTimeout(() => toast.remove(), 300);
@@ -722,7 +1108,6 @@ function showToast(message, showUndo = false) {
 
     toastContainer.appendChild(toast);
 
-    // Event listeners
     const closeBtn = toast.querySelector('.toast-close');
     closeBtn.addEventListener('click', () => {
         toast.classList.add('hiding');
@@ -738,7 +1123,6 @@ function showToast(message, showUndo = false) {
         });
     }
 
-    // Auto dismiss
     setTimeout(() => {
         if (toast.parentNode) {
             toast.classList.add('hiding');
@@ -786,7 +1170,7 @@ function createTodoElement(todo) {
 
         const daysDiff = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
         let dateClass = '';
-        let dateText = dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        let dateText = formatDate(todo.dueDate);
 
         if (daysDiff < 0 && !todo.completed) {
             dateClass = 'overdue';
@@ -801,10 +1185,24 @@ function createTodoElement(todo) {
         dueDateHtml = `<span class="due-date-badge ${dateClass}">📅 ${dateText}</span>`;
     }
 
+    // Recurring badge
+    let recurringHtml = '';
+    if (todo.recurring) {
+        const recurringLabels = { daily: '🔄 Daily', weekly: '🔄 Weekly', monthly: '🔄 Monthly' };
+        recurringHtml = `<span class="recurring-badge">${recurringLabels[todo.recurring]}</span>`;
+    }
+
+    // Reminder badge
+    let reminderHtml = '';
+    if (todo.reminderTime) {
+        reminderHtml = `<span class="reminder-badge">⏰ ${todo.reminderTime}</span>`;
+    }
+
     // Subtasks HTML
     let subtasksHtml = '';
+    const isCompleted = todo.completed;
+
     if (todo.subtasks && todo.subtasks.length > 0) {
-        const completedSubtasks = todo.subtasks.filter(s => s.completed).length;
         subtasksHtml = `
             <div class="subtasks-container">
                 ${todo.subtasks.map(subtask => `
@@ -814,13 +1212,13 @@ function createTodoElement(todo) {
                         <button class="subtask-delete">×</button>
                     </div>
                 `).join('')}
-                <button class="add-subtask-btn">+ Add subtask</button>
+                <button class="add-subtask-btn ${isCompleted ? 'disabled' : ''}">+ Add subtask</button>
             </div>
         `;
     } else {
         subtasksHtml = `
             <div class="subtasks-container" style="display: none;">
-                <button class="add-subtask-btn">+ Add subtask</button>
+                <button class="add-subtask-btn ${isCompleted ? 'disabled' : ''}">+ Add subtask</button>
             </div>
         `;
     }
@@ -833,25 +1231,32 @@ function createTodoElement(todo) {
     }
 
     li.innerHTML = `
-        <label class="todo-checkbox">
-            <input type="checkbox" ${todo.completed ? 'checked' : ''}>
-            <span class="checkmark"></span>
-        </label>
-        <div class="todo-content">
-            <div class="todo-main">
-                <span class="todo-text">${escapeHtml(todo.text)}</span>
-                ${progressHtml}
+        <div class="swipe-bg left">✓</div>
+        <div class="swipe-bg right">🗑️</div>
+        <div class="swipe-content">
+            <label class="todo-checkbox">
+                <input type="checkbox" ${todo.completed ? 'checked' : ''}>
+                <span class="checkmark"></span>
+            </label>
+            <div class="todo-content">
+                <div class="todo-main">
+                    <span class="todo-text">${escapeHtml(todo.text)}</span>
+                    ${progressHtml}
+                </div>
+                <div class="todo-meta">
+                    <span class="priority-badge ${todo.priority}">${todo.priority}</span>
+                    ${dueDateHtml}
+                    ${recurringHtml}
+                    ${reminderHtml}
+                    ${todo.category ? `<span class="category-badge">${escapeHtml(todo.category)}</span>` : ''}
+                </div>
+                ${subtasksHtml}
             </div>
-            <div class="todo-meta">
-                <span class="priority-badge ${todo.priority}">${todo.priority}</span>
-                ${dueDateHtml}
-                ${todo.category ? `<span class="category-badge">${escapeHtml(todo.category)}</span>` : ''}
+            <div class="todo-actions">
+                <button class="todo-action-btn expand" title="Toggle subtasks">▼</button>
+                <button class="todo-action-btn archive" title="Archive">📦</button>
+                <button class="todo-action-btn delete" title="Delete">×</button>
             </div>
-            ${subtasksHtml}
-        </div>
-        <div class="todo-actions">
-            <button class="todo-action-btn expand" title="Toggle subtasks">▼</button>
-            <button class="todo-action-btn delete" title="Delete">×</button>
         </div>
     `;
 
@@ -859,6 +1264,7 @@ function createTodoElement(todo) {
     const checkbox = li.querySelector('.todo-checkbox input');
     const textEl = li.querySelector('.todo-text');
     const deleteBtn = li.querySelector('.todo-action-btn.delete');
+    const archiveBtn = li.querySelector('.todo-action-btn.archive');
     const expandBtn = li.querySelector('.todo-action-btn.expand');
     const subtasksContainer = li.querySelector('.subtasks-container');
     const addSubtaskBtn = li.querySelector('.add-subtask-btn');
@@ -866,6 +1272,7 @@ function createTodoElement(todo) {
     checkbox.addEventListener('change', () => toggleTodo(todo.id));
     textEl.addEventListener('dblclick', () => editTodo(todo.id));
     deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
+    archiveBtn.addEventListener('click', () => archiveTodo(todo.id));
 
     expandBtn.addEventListener('click', () => {
         const isHidden = subtasksContainer.style.display === 'none';
@@ -873,17 +1280,26 @@ function createTodoElement(todo) {
         expandBtn.textContent = isHidden ? '▲' : '▼';
     });
 
-    addSubtaskBtn.addEventListener('click', () => showSubtaskInput(todo.id, subtasksContainer));
+    if (!isCompleted) {
+        addSubtaskBtn.addEventListener('click', () => showSubtaskInput(todo.id, subtasksContainer));
+    }
 
     // Subtask event listeners
     li.querySelectorAll('.subtask-item').forEach(item => {
         const subtaskId = parseInt(item.dataset.subtaskId);
         const subtaskCheckbox = item.querySelector('.subtask-checkbox');
         const subtaskDelete = item.querySelector('.subtask-delete');
+        const subtaskText = item.querySelector('.subtask-text');
 
         subtaskCheckbox.addEventListener('change', () => toggleSubtask(todo.id, subtaskId));
         subtaskDelete.addEventListener('click', () => deleteSubtask(todo.id, subtaskId));
+        subtaskText.addEventListener('dblclick', () => editSubtask(todo.id, subtaskId));
     });
+
+    // Touch gestures
+    li.addEventListener('touchstart', (e) => handleTouchStart(e, todo.id), { passive: true });
+    li.addEventListener('touchmove', (e) => handleTouchMove(e, li), { passive: true });
+    li.addEventListener('touchend', (e) => handleTouchEnd(e, todo.id, li));
 
     // Drag and drop
     li.addEventListener('dragstart', handleDragStart);
@@ -893,6 +1309,58 @@ function createTodoElement(todo) {
     li.addEventListener('drop', handleDrop);
 
     return li;
+}
+
+function renderArchive() {
+    archiveList.innerHTML = '';
+
+    if (archivedTodos.length === 0) {
+        archiveEmpty.classList.add('visible');
+        archiveList.style.display = 'none';
+    } else {
+        archiveEmpty.classList.remove('visible');
+        archiveList.style.display = 'flex';
+
+        archivedTodos.forEach(todo => {
+            const li = document.createElement('li');
+            li.className = 'archive-item';
+            li.innerHTML = `
+                <span class="archive-item-text">${escapeHtml(todo.text)}</span>
+                <span class="archive-item-date">${formatDate(todo.archivedAt)}</span>
+                <button class="restore-btn">Restore</button>
+            `;
+
+            li.querySelector('.restore-btn').addEventListener('click', () => restoreFromArchive(todo.id));
+            archiveList.appendChild(li);
+        });
+    }
+}
+
+function renderTrash() {
+    trashList.innerHTML = '';
+
+    if (trashedTodos.length === 0) {
+        trashEmpty.classList.add('visible');
+        trashList.style.display = 'none';
+    } else {
+        trashEmpty.classList.remove('visible');
+        trashList.style.display = 'flex';
+
+        trashedTodos.forEach(todo => {
+            const li = document.createElement('li');
+            li.className = 'trash-item';
+            li.innerHTML = `
+                <span class="trash-item-text">${escapeHtml(todo.text)}</span>
+                <span class="trash-item-date">${formatDate(todo.deletedAt)}</span>
+                <button class="restore-btn">Restore</button>
+                <button class="delete-permanent-btn">Delete</button>
+            `;
+
+            li.querySelector('.restore-btn').addEventListener('click', () => restoreFromTrash(todo.id));
+            li.querySelector('.delete-permanent-btn').addEventListener('click', () => permanentlyDelete(todo.id));
+            trashList.appendChild(li);
+        });
+    }
 }
 
 function updateTaskCount() {
@@ -908,6 +1376,12 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 // ===================================

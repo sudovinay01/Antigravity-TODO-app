@@ -900,6 +900,62 @@ body {
     color: var(--accent-primary);
 }
 
+/* Inline Subtask Input */
+.subtask-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    animation: slideIn 0.2s ease;
+}
+
+.subtask-input {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    font-family: var(--font-family);
+    background: var(--bg-primary);
+    border: 2px solid var(--accent-primary);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    outline: none;
+}
+
+.subtask-input::placeholder {
+    color: var(--text-muted);
+}
+
+.subtask-input-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    font-family: var(--font-family);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.subtask-input-btn.save {
+    background: var(--accent-gradient);
+    color: white;
+}
+
+.subtask-input-btn.save:hover {
+    transform: scale(1.05);
+}
+
+.subtask-input-btn.cancel {
+    background: var(--bg-hover);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.subtask-input-btn.cancel:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
 .subtask-progress {
     font-size: 0.65rem;
     color: var(--text-muted);

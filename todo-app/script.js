@@ -406,16 +406,62 @@ function clearCompletedTodos() {
 // ===================================
 // Subtasks
 // ===================================
-function addSubtask(todoId) {
+function showSubtaskInput(todoId, containerElement) {
+    // Check if input already exists
+    if (containerElement.querySelector('.subtask-input-wrapper')) return;
+
+    const addBtn = containerElement.querySelector('.add-subtask-btn');
+
+    // Create input wrapper
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subtask-input-wrapper';
+    wrapper.innerHTML = `
+        <input type="text" class="subtask-input" placeholder="Enter subtask..." autofocus>
+        <button class="subtask-input-btn save">Add</button>
+        <button class="subtask-input-btn cancel">✕</button>
+    `;
+
+    // Insert before the add button
+    addBtn.parentNode.insertBefore(wrapper, addBtn);
+
+    const input = wrapper.querySelector('.subtask-input');
+    const saveBtn = wrapper.querySelector('.save');
+    const cancelBtn = wrapper.querySelector('.cancel');
+
+    input.focus();
+
+    function saveSubtask() {
+        const text = input.value.trim();
+        if (text) {
+            addSubtaskToTodo(todoId, text);
+        } else {
+            wrapper.remove();
+        }
+    }
+
+    function cancelInput() {
+        wrapper.remove();
+    }
+
+    saveBtn.addEventListener('click', saveSubtask);
+    cancelBtn.addEventListener('click', cancelInput);
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            saveSubtask();
+        } else if (e.key === 'Escape') {
+            cancelInput();
+        }
+    });
+}
+
+function addSubtaskToTodo(todoId, text) {
     const todo = todos.find(t => t.id === todoId);
     if (!todo) return;
 
-    const text = prompt('Enter subtask:');
-    if (!text || !text.trim()) return;
-
     todo.subtasks.push({
         id: Date.now(),
-        text: text.trim(),
+        text: text,
         completed: false
     });
 
@@ -827,7 +873,7 @@ function createTodoElement(todo) {
         expandBtn.textContent = isHidden ? '▲' : '▼';
     });
 
-    addSubtaskBtn.addEventListener('click', () => addSubtask(todo.id));
+    addSubtaskBtn.addEventListener('click', () => showSubtaskInput(todo.id, subtasksContainer));
 
     // Subtask event listeners
     li.querySelectorAll('.subtask-item').forEach(item => {

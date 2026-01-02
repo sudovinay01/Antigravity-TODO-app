@@ -42,6 +42,12 @@ const trashBadge = document.getElementById('trashBadge');
 const closeTrash = document.getElementById('closeTrash');
 const emptyTrash = document.getElementById('emptyTrash');
 
+// Add Task Modal Elements
+const addTaskModal = document.getElementById('addTaskModal');
+const openAddModal = document.getElementById('openAddModal');
+const closeAddModal = document.getElementById('closeAddModal');
+const cancelAddModal = document.getElementById('cancelAddModal');
+
 // State
 let todos = [];
 let archivedTodos = [];
@@ -136,6 +142,14 @@ function init() {
     updateBadges();
 
     // Event Listeners
+    // Add Task Modal
+    openAddModal.addEventListener('click', openAddTaskModal);
+    closeAddModal.addEventListener('click', closeAddTaskModal);
+    cancelAddModal.addEventListener('click', closeAddTaskModal);
+    addTaskModal.addEventListener('click', (e) => {
+        if (e.target === addTaskModal) closeAddTaskModal();
+    });
+
     addBtn.addEventListener('click', addTodo);
     todoInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') addTodo();
@@ -224,16 +238,36 @@ function handleKeyboardShortcuts(e) {
                 break;
             case 'n':
                 e.preventDefault();
-                todoInput.focus();
+                openAddTaskModal();
                 break;
         }
     } else if (e.key === '?') {
         shortcutsModal.classList.add('visible');
     } else if (e.key === 'Escape') {
+        closeAddTaskModal();
         shortcutsModal.classList.remove('visible');
         archiveModal.classList.remove('visible');
         trashModal.classList.remove('visible');
     }
+}
+
+// ===================================
+// Add Task Modal Functions
+// ===================================
+function openAddTaskModal() {
+    addTaskModal.classList.add('visible');
+    setTimeout(() => todoInput.focus(), 100);
+}
+
+function closeAddTaskModal() {
+    addTaskModal.classList.remove('visible');
+    // Reset form
+    todoInput.value = '';
+    prioritySelect.value = 'low';
+    dueDateInput.value = '';
+    categoryInput.value = '';
+    recurringSelect.value = '';
+    reminderInput.value = '';
 }
 
 // ===================================
@@ -349,14 +383,8 @@ function addTodo() {
     updateCategoryFilter();
     updateCategoryDatalist();
 
-    // Reset inputs
-    todoInput.value = '';
-    prioritySelect.value = 'low';
-    dueDateInput.value = '';
-    categoryInput.value = '';
-    recurringSelect.value = '';
-    reminderInput.value = '';
-    todoInput.focus();
+    // Close modal and reset
+    closeAddTaskModal();
 
     playSound('add');
 

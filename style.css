@@ -2,15 +2,10 @@
    CSS Variables & Theming
    =================================== */
 :root {
-    /* Typography */
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-
-    /* Transitions */
     --transition-fast: 0.2s ease;
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s ease;
-
-    /* Borders */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 20px;
@@ -24,26 +19,20 @@
     --bg-card: rgba(30, 30, 50, 0.7);
     --bg-input: rgba(255, 255, 255, 0.05);
     --bg-hover: rgba(255, 255, 255, 0.08);
-
     --text-primary: #ffffff;
     --text-secondary: rgba(255, 255, 255, 0.7);
     --text-muted: rgba(255, 255, 255, 0.4);
-
     --accent-primary: #6366f1;
     --accent-secondary: #8b5cf6;
     --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-
     --border-color: rgba(255, 255, 255, 0.1);
     --shadow-color: rgba(0, 0, 0, 0.3);
-
     --success: #22c55e;
     --warning: #f59e0b;
     --danger: #ef4444;
-
     --priority-high: #ef4444;
     --priority-medium: #f59e0b;
     --priority-low: #22c55e;
-
     --orb-1: rgba(99, 102, 241, 0.3);
     --orb-2: rgba(139, 92, 246, 0.2);
     --orb-3: rgba(168, 85, 247, 0.15);
@@ -56,33 +45,27 @@
     --bg-card: rgba(255, 255, 255, 0.8);
     --bg-input: rgba(0, 0, 0, 0.03);
     --bg-hover: rgba(0, 0, 0, 0.05);
-
     --text-primary: #1a1a2e;
     --text-secondary: rgba(26, 26, 46, 0.7);
     --text-muted: rgba(26, 26, 46, 0.4);
-
     --accent-primary: #6366f1;
     --accent-secondary: #8b5cf6;
     --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-
     --border-color: rgba(0, 0, 0, 0.08);
     --shadow-color: rgba(99, 102, 241, 0.15);
-
     --success: #16a34a;
     --warning: #d97706;
     --danger: #dc2626;
-
     --priority-high: #dc2626;
     --priority-medium: #d97706;
     --priority-low: #16a34a;
-
     --orb-1: rgba(99, 102, 241, 0.2);
     --orb-2: rgba(139, 92, 246, 0.15);
     --orb-3: rgba(168, 85, 247, 0.1);
 }
 
 /* ===================================
-   Reset & Base Styles
+   Reset & Base
    =================================== */
 *,
 *::before,
@@ -196,7 +179,7 @@ body {
     padding: 24px;
     position: relative;
     z-index: 1;
-    transition: background var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+    transition: all var(--transition-normal);
 }
 
 /* ===================================
@@ -239,7 +222,6 @@ body {
     color: var(--text-secondary);
     font-size: 0.75rem;
     margin-top: 2px;
-    font-weight: 400;
 }
 
 /* Search */
@@ -355,136 +337,47 @@ body {
 }
 
 /* ===================================
-   Add Todo Section
+   Add Task Button
    =================================== */
-.add-todo-section {
+.add-task-section {
     margin-bottom: 16px;
 }
 
-.input-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-
-.todo-input {
-    flex: 1;
-    padding: 12px 16px;
-    font-size: 0.9rem;
+.add-task-btn {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
     font-family: var(--font-family);
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    color: var(--text-primary);
-    outline: none;
-    transition: all var(--transition-fast);
-}
-
-.todo-input::placeholder {
-    color: var(--text-muted);
-}
-
-.todo-input:focus {
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-}
-
-.add-btn {
-    width: 48px;
-    height: 48px;
+    background: var(--accent-gradient);
     border: none;
     border-radius: var(--radius-md);
-    background: var(--accent-gradient);
     color: white;
-    font-size: 1.3rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     transition: all var(--transition-fast);
     box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
 }
 
-.add-btn:hover {
+.add-task-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
 }
 
-.add-btn:active {
+.add-task-btn:active {
     transform: translateY(0);
 }
 
-.add-icon {
+.add-task-icon {
+    font-size: 1.2rem;
     font-weight: 300;
-    line-height: 1;
-}
-
-/* Options Row */
-.options-row {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-bottom: 6px;
-}
-
-.option-group {
-    flex: 1;
-    min-width: 80px;
-}
-
-.option-select,
-.option-input {
-    width: 100%;
-    padding: 8px 10px;
-    font-size: 0.75rem;
-    font-family: var(--font-family);
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    color: var(--text-primary);
-    outline: none;
-    transition: all var(--transition-fast);
-    cursor: pointer;
-}
-
-.option-select {
-    background-color: var(--bg-secondary);
-}
-
-.option-select option {
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
-    padding: 8px;
-}
-
-[data-theme="light"] .option-select {
-    background-color: #ffffff;
-}
-
-[data-theme="light"] .option-select option {
-    background-color: #ffffff;
-    color: #1a1a2e;
-}
-
-.option-select:focus,
-.option-input:focus {
-    border-color: var(--accent-primary);
-}
-
-.option-input::placeholder {
-    color: var(--text-muted);
-}
-
-.date-input {
-    color-scheme: dark;
-}
-
-[data-theme="light"] .date-input {
-    color-scheme: light;
 }
 
 /* ===================================
-   Filter & Actions Row
+   Filter & Actions
    =================================== */
 .filter-actions-row {
     display: flex;
@@ -525,11 +418,6 @@ body {
     background: var(--accent-gradient);
     color: white;
     box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
-}
-
-.action-btns {
-    display: flex;
-    gap: 6px;
 }
 
 .sort-select {
@@ -584,14 +472,14 @@ body {
 }
 
 /* ===================================
-   Todo List
+   Todo List - Clean Design
    =================================== */
 .todo-list {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    max-height: 300px;
+    gap: 2px;
+    max-height: 350px;
     overflow-y: auto;
     padding-right: 4px;
     -webkit-overflow-scrolling: touch;
@@ -610,73 +498,45 @@ body {
     border-radius: 2px;
 }
 
-/* Todo Item */
+/* Todo Item - Clean borderless design */
 .todo-item {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    padding: 12px;
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
     transition: all var(--transition-fast);
     animation: slideIn 0.3s ease;
     position: relative;
-    overflow: hidden;
-    touch-action: pan-y;
 }
 
-/* Touch Swipe Layers */
-.todo-item .swipe-bg {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    color: white;
-    opacity: 0;
-    transition: opacity var(--transition-fast);
+.todo-item:last-child {
+    border-bottom: none;
 }
 
-.todo-item .swipe-bg.left {
-    left: 0;
-    background: var(--success);
-    border-radius: var(--radius-md) 0 0 var(--radius-md);
+.todo-item:hover {
+    background: var(--bg-hover);
 }
 
-.todo-item .swipe-bg.right {
-    right: 0;
-    background: var(--danger);
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+.todo-item.completed {
+    opacity: 0.5;
 }
 
-.todo-item.swiping .swipe-bg {
-    opacity: 1;
-}
-
-.todo-item .swipe-content {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    width: 100%;
-    transition: transform var(--transition-fast);
-    background: var(--bg-input);
-    position: relative;
-    z-index: 1;
+.todo-item.completed .todo-text {
+    text-decoration: line-through;
+    color: var(--text-muted);
 }
 
 .todo-item.dragging {
     opacity: 0.5;
-    transform: scale(1.02);
-    box-shadow: 0 10px 30px var(--shadow-color);
+    background: var(--bg-hover);
 }
 
 .todo-item.drag-over {
-    border-color: var(--accent-primary);
-    background: var(--bg-hover);
+    border-bottom-color: var(--accent-primary);
+    border-bottom-width: 2px;
 }
 
 @keyframes slideIn {
@@ -689,20 +549,6 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.todo-item:hover {
-    background: var(--bg-hover);
-    border-color: var(--accent-primary);
-}
-
-.todo-item.completed {
-    opacity: 0.5;
-}
-
-.todo-item.completed .todo-text {
-    text-decoration: line-through;
-    color: var(--text-muted);
 }
 
 /* Todo Content */
@@ -778,7 +624,6 @@ body {
     font-size: 0.9rem;
     color: var(--text-primary);
     word-break: break-word;
-    transition: all var(--transition-fast);
     cursor: text;
 }
 
@@ -814,7 +659,6 @@ body {
     font-weight: 600;
     text-transform: uppercase;
     border-radius: 8px;
-    letter-spacing: 0.5px;
 }
 
 .priority-badge.high {
@@ -838,9 +682,6 @@ body {
     background: var(--bg-hover);
     border-radius: 8px;
     color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 3px;
 }
 
 .due-date-badge.overdue {
@@ -861,7 +702,8 @@ body {
     border-radius: 8px;
 }
 
-.recurring-badge {
+.recurring-badge,
+.reminder-badge {
     padding: 2px 6px;
     font-size: 0.6rem;
     background: rgba(139, 92, 246, 0.15);
@@ -869,19 +711,11 @@ body {
     border-radius: 8px;
 }
 
-.reminder-badge {
-    padding: 2px 6px;
-    font-size: 0.6rem;
-    background: rgba(34, 197, 94, 0.15);
-    color: var(--success);
-    border-radius: 8px;
-}
-
 /* Subtasks */
 .subtasks-container {
     margin-left: 30px;
-    margin-top: 6px;
-    padding-left: 10px;
+    margin-top: 8px;
+    padding-left: 12px;
     border-left: 2px solid var(--border-color);
 }
 
@@ -889,7 +723,7 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 5px 0;
+    padding: 6px 0;
     font-size: 0.8rem;
     color: var(--text-secondary);
 }
@@ -934,7 +768,6 @@ body {
     color: var(--danger);
 }
 
-/* Subtask Edit Input */
 .subtask-edit-input {
     flex: 1;
     padding: 2px 6px;
@@ -948,14 +781,14 @@ body {
 }
 
 .add-subtask-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 4px 8px;
-    margin-top: 4px;
-    font-size: 0.7rem;
+    padding: 6px 10px;
+    margin-top: 8px;
+    font-size: 0.75rem;
     font-family: var(--font-family);
-    background: none;
+    background: var(--bg-input);
     border: 1px dashed var(--border-color);
     border-radius: var(--radius-sm);
     color: var(--text-muted);
@@ -966,6 +799,7 @@ body {
 .add-subtask-btn:hover {
     border-color: var(--accent-primary);
     color: var(--accent-primary);
+    background: var(--bg-hover);
 }
 
 .add-subtask-btn.disabled {
@@ -1302,10 +1136,10 @@ body {
     backdrop-filter: blur(20px);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: 20px;
-    max-width: 400px;
+    padding: 24px;
+    max-width: 420px;
     width: 100%;
-    max-height: 80vh;
+    max-height: 85vh;
     display: flex;
     flex-direction: column;
     animation: modalIn 0.3s ease;
@@ -1318,12 +1152,12 @@ body {
 @keyframes modalIn {
     from {
         opacity: 0;
-        transform: scale(0.9);
+        transform: scale(0.9) translateY(-20px);
     }
 
     to {
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1) translateY(0);
     }
 }
 
@@ -1331,18 +1165,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     gap: 10px;
 }
 
 .modal-header h2 {
     font-size: 1.1rem;
     font-weight: 600;
-}
-
-.modal-header-actions {
-    display: flex;
-    gap: 8px;
 }
 
 .modal-close {
@@ -1366,15 +1195,122 @@ body {
 }
 
 .modal-footer {
-    margin-top: 12px;
-    padding-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
     border-top: 1px solid var(--border-color);
 }
 
-.trash-info {
-    font-size: 0.75rem;
+/* Form Elements for Modal */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 0.9rem;
+    font-family: var(--font-family);
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    outline: none;
+    transition: all var(--transition-fast);
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.form-input::placeholder {
     color: var(--text-muted);
-    text-align: center;
+}
+
+.form-select {
+    background-color: var(--bg-secondary);
+    cursor: pointer;
+}
+
+.form-select option {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .form-select {
+    background-color: #ffffff;
+}
+
+[data-theme="light"] .form-select option {
+    background-color: #ffffff;
+    color: #1a1a2e;
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.date-input {
+    color-scheme: dark;
+}
+
+[data-theme="light"] .date-input {
+    color-scheme: light;
+}
+
+/* Buttons */
+.btn-primary {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--font-family);
+    background: var(--accent-gradient);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
+.btn-secondary {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: var(--font-family);
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
 }
 
 .danger-btn {
@@ -1394,6 +1330,13 @@ body {
     color: white;
 }
 
+.trash-info {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* Shortcuts */
 .shortcuts-list {
     display: flex;
     flex-direction: column;
@@ -1423,7 +1366,7 @@ body {
     font-size: 0.85rem;
 }
 
-/* Archive/Trash List */
+/* Archive/Trash Lists */
 .archive-list,
 .trash-list {
     list-style: none;
@@ -1489,7 +1432,7 @@ body {
 }
 
 /* ===================================
-   Responsive Design
+   Responsive
    =================================== */
 @media (max-width: 520px) {
     body {
@@ -1531,25 +1474,6 @@ body {
         height: 40px;
     }
 
-    .todo-input {
-        padding: 12px;
-        font-size: 16px;
-        /* Prevents zoom on iOS */
-    }
-
-    .add-btn {
-        width: 48px;
-        height: 48px;
-    }
-
-    .options-row {
-        flex-direction: column;
-    }
-
-    .option-group {
-        min-width: 100%;
-    }
-
     .filter-actions-row {
         flex-direction: column;
         align-items: stretch;
@@ -1563,19 +1487,10 @@ body {
         justify-content: center;
     }
 
-    .filter-btn {
-        padding: 8px 12px;
-    }
-
     .todo-list {
-        max-height: 250px;
+        max-height: 280px;
     }
 
-    .todo-item {
-        padding: 12px;
-    }
-
-    /* Show actions on mobile */
     .todo-actions {
         opacity: 1;
     }
@@ -1599,17 +1514,17 @@ body {
         text-align: center;
     }
 
-    .toast {
-        padding: 10px 14px;
+    .modal-content {
+        padding: 20px;
+        max-height: 90vh;
     }
 
-    .modal-content {
-        padding: 16px;
-        max-height: 90vh;
+    .form-row {
+        flex-direction: column;
+        gap: 0;
     }
 }
 
-/* Touch-friendly targets */
 @media (pointer: coarse) {
     .todo-checkbox {
         width: 28px;
@@ -1650,7 +1565,7 @@ body {
 }
 
 /* ===================================
-   Extra Animations
+   Animations
    =================================== */
 @keyframes shake {
 
@@ -1679,11 +1594,11 @@ body {
 
     0%,
     100% {
-        background: var(--bg-input);
+        background: transparent;
     }
 
     50% {
-        background: rgba(99, 102, 241, 0.2);
+        background: rgba(99, 102, 241, 0.1);
     }
 }
 

@@ -48,45 +48,12 @@
                 </div>
             </header>
 
-            <!-- Add Todo Section -->
-            <div class="add-todo-section">
-                <div class="input-row">
-                    <input type="text" id="todoInput" class="todo-input" placeholder="What needs to be done?"
-                        autocomplete="off">
-                    <button class="add-btn" id="addBtn" aria-label="Add todo">
-                        <span class="add-icon">+</span>
-                    </button>
-                </div>
-                <div class="options-row">
-                    <div class="option-group">
-                        <select id="prioritySelect" class="option-select">
-                            <option value="low">🟢 Low</option>
-                            <option value="medium">🟡 Medium</option>
-                            <option value="high">🔴 High</option>
-                        </select>
-                    </div>
-                    <div class="option-group">
-                        <input type="date" id="dueDateInput" class="option-input date-input" title="Due date">
-                    </div>
-                    <div class="option-group">
-                        <select id="recurringSelect" class="option-select">
-                            <option value="">🔄 Once</option>
-                            <option value="daily">📅 Daily</option>
-                            <option value="weekly">📆 Weekly</option>
-                            <option value="monthly">🗓️ Monthly</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="options-row">
-                    <div class="option-group">
-                        <input type="text" id="categoryInput" class="option-input category-input" placeholder="Category"
-                            list="categoryList">
-                        <datalist id="categoryList"></datalist>
-                    </div>
-                    <div class="option-group">
-                        <input type="time" id="reminderInput" class="option-input" title="Reminder time">
-                    </div>
-                </div>
+            <!-- Add Task Button -->
+            <div class="add-task-section">
+                <button class="add-task-btn" id="openAddModal">
+                    <span class="add-task-icon">+</span>
+                    <span>Add New Task</span>
+                </button>
             </div>
 
             <!-- Filter & Actions Row -->
@@ -144,6 +111,62 @@
         <div class="toast-container" id="toastContainer"></div>
     </div>
 
+    <!-- Add Task Modal -->
+    <div class="modal" id="addTaskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✨ New Task</h2>
+                <button class="modal-close" id="closeAddModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Task Name</label>
+                    <input type="text" id="todoInput" class="form-input" placeholder="What needs to be done?"
+                        autocomplete="off">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="prioritySelect" class="form-select">
+                            <option value="low">🟢 Low</option>
+                            <option value="medium">🟡 Medium</option>
+                            <option value="high">🔴 High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="dueDateInput" class="form-input date-input">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Recurring</label>
+                        <select id="recurringSelect" class="form-select">
+                            <option value="">🔄 Once</option>
+                            <option value="daily">📅 Daily</option>
+                            <option value="weekly">📆 Weekly</option>
+                            <option value="monthly">🗓️ Monthly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Reminder</label>
+                        <input type="time" id="reminderInput" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" id="categoryInput" class="form-input" placeholder="e.g. Work, Personal"
+                        list="categoryList">
+                    <datalist id="categoryList"></datalist>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelAddModal">Cancel</button>
+                <button class="btn-primary" id="addBtn">Add Task</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Archive Modal -->
     <div class="modal" id="archiveModal">
         <div class="modal-content modal-large">
@@ -193,20 +216,16 @@
             </div>
             <div class="shortcuts-list">
                 <div class="shortcut-item">
-                    <kbd>Enter</kbd>
-                    <span>Add new todo</span>
+                    <kbd>Ctrl + N</kbd>
+                    <span>New task</span>
                 </div>
                 <div class="shortcut-item">
                     <kbd>Escape</kbd>
-                    <span>Cancel edit</span>
+                    <span>Close modal</span>
                 </div>
                 <div class="shortcut-item">
                     <kbd>Ctrl + F</kbd>
                     <span>Focus search</span>
-                </div>
-                <div class="shortcut-item">
-                    <kbd>Ctrl + N</kbd>
-                    <span>New todo</span>
                 </div>
                 <div class="shortcut-item">
                     <kbd>?</kbd>

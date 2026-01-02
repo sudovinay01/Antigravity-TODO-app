@@ -657,10 +657,10 @@ body {
 .todo-action-btn {
     width: 28px;
     height: 28px;
-    border: none;
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
-    background: var(--bg-hover);
-    color: var(--text-muted);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
     font-size: 0.85rem;
     cursor: pointer;
     display: flex;
@@ -675,11 +675,13 @@ body {
 
 .todo-action-btn.delete:hover {
     background: rgba(239, 68, 68, 0.15);
+    border-color: var(--danger);
     color: var(--danger);
 }
 
 .todo-action-btn.archive:hover {
     background: rgba(99, 102, 241, 0.15);
+    border-color: var(--accent-primary);
     color: var(--accent-primary);
 }
 
@@ -788,7 +790,6 @@ body {
 }
 
 .subtask-delete {
-    opacity: 0;
     background: none;
     border: none;
     color: var(--text-muted);
@@ -796,10 +797,6 @@ body {
     font-size: 0.9rem;
     padding: 0 4px;
     transition: all var(--transition-fast);
-}
-
-.subtask-item:hover .subtask-delete {
-    opacity: 1;
 }
 
 .subtask-delete:hover {

@@ -443,6 +443,25 @@ body {
     cursor: pointer;
 }
 
+.option-select {
+    background-color: var(--bg-secondary);
+}
+
+.option-select option {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 8px;
+}
+
+[data-theme="light"] .option-select {
+    background-color: #ffffff;
+}
+
+[data-theme="light"] .option-select option {
+    background-color: #ffffff;
+    color: #1a1a2e;
+}
+
 .option-select:focus,
 .option-input:focus {
     border-color: var(--accent-primary);

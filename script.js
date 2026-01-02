@@ -1414,7 +1414,10 @@ function createTodoElement(todo) {
     const deleteBtn = li.querySelector('.todo-action-btn.delete');
     const archiveBtn = li.querySelector('.todo-action-btn.archive');
 
-    checkbox.addEventListener('change', () => toggleTodo(todo.id));
+    checkbox.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleTodo(todo.id);
+    });
     textEl.addEventListener('dblclick', () => editTodo(todo.id));
     deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
     archiveBtn.addEventListener('click', () => archiveTodo(todo.id));

@@ -26,10 +26,16 @@
             <!-- Header -->
             <header class="header">
                 <div class="header-left">
-                    <h1 class="title">
-                        <span class="title-icon">✨</span>
-                        My Tasks
-                    </h1>
+                    <div class="header-title-row">
+                        <h1 class="title">
+                            <span class="title-icon">✨</span>
+                            My Tasks
+                        </h1>
+                        <button class="install-app-btn" id="pwaInstallBtn" style="display: none;">
+                            <span class="install-app-icon">📱</span>
+                            Install App
+                        </button>
+                    </div>
                     <p class="subtitle">Stay organized, stay productive</p>
                 </div>
                 <div class="header-right">
@@ -37,8 +43,7 @@
                         <span class="search-icon">🔍</span>
                         <input type="text" id="searchInput" class="search-input" placeholder="Search...">
                     </div>
-                    <button class="icon-btn" id="pwaInstallBtn" aria-label="Install App" title="Install App"
-                        style="display: none;">📱</button>
+                    <!-- Install button removed from here -->
                     <button class="icon-btn" id="soundToggle" aria-label="Toggle sound" title="Toggle sound">
                         <span class="sound-on">🔊</span>
                         <span class="sound-off">🔇</span>

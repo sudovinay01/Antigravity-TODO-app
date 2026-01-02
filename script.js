@@ -267,7 +267,7 @@ function initPWA() {
         // Show persistent install button
         const pwaInstallBtn = document.getElementById('pwaInstallBtn');
         if (pwaInstallBtn) {
-            pwaInstallBtn.style.display = 'flex';
+            pwaInstallBtn.style.display = 'inline-flex';
             pwaInstallBtn.addEventListener('click', () => {
                 installBanner.classList.add('visible');
             });

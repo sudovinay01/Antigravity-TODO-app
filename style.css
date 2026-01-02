@@ -214,6 +214,55 @@ body {
     gap: 8px;
 }
 
+.header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.install-app-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--accent-gradient);
+    border: none;
+    border-radius: var(--radius-lg);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    animation: gentlePulse 3s infinite;
+}
+
+.install-app-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
+}
+
+.install-app-btn:active {
+    transform: translateY(0);
+}
+
+.install-app-icon {
+    font-size: 1rem;
+}
+
+@keyframes gentlePulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+    }
+}
+
 .title-icon {
     font-size: 1.2rem;
 }
@@ -221,7 +270,7 @@ body {
 .subtitle {
     color: var(--text-secondary);
     font-size: 0.75rem;
-    margin-top: 2px;
+    margin-top: 4px;
 }
 
 /* Search */
@@ -1759,22 +1808,29 @@ body.offline .app-container {
     max-width: 380px;
     border-radius: var(--radius-lg);
     overflow: hidden;
+    max-height: 90vh;
+    /* Prevent it from being taller than screen */
+    display: flex;
+    flex-direction: column;
 }
 
 .install-modal .modal-close {
     position: absolute;
-    top: 16px;
-    right: 16px;
+    top: 12px;
+    right: 12px;
     z-index: 10;
 }
 
 .install-modal-content {
     position: relative;
     padding: 0;
+    overflow-y: auto;
+    /* Allow scrolling if content is still too tall */
 }
 
 .install-modal-body {
-    padding: 50px 35px 40px;
+    padding: 30px 25px 30px;
+    /* Reduced vertical padding */
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -1782,8 +1838,9 @@ body.offline .app-container {
 }
 
 .install-icon {
-    font-size: 5rem;
-    margin-bottom: 20px;
+    font-size: 4rem;
+    /* Slightly smaller icon */
+    margin-bottom: 15px;
     animation: bounce 2s infinite;
     line-height: 1;
 }
@@ -1796,38 +1853,39 @@ body.offline .app-container {
     }
 
     50% {
-        transform: translateY(-10px);
+        transform: translateY(-8px);
     }
 }
 
 .install-title {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .install-description {
     font-size: 0.9rem;
     color: var(--text-secondary);
-    margin-bottom: 28px;
-    line-height: 1.6;
+    margin-bottom: 20px;
+    line-height: 1.5;
     max-width: 280px;
 }
 
 .install-features {
     list-style: none;
     padding: 0;
-    margin: 0 0 28px 0;
+    margin: 0 0 24px 0;
     width: 100%;
     background: var(--bg-input);
     border-radius: var(--radius-md);
-    padding: 12px 0;
+    padding: 8px 0;
 }
 
 .install-features li {
-    padding: 10px 24px;
-    font-size: 0.9rem;
+    padding: 8px 16px;
+    /* Reduced padding */
+    font-size: 0.85rem;
     color: var(--text-primary);
     display: flex;
     align-items: center;

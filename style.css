@@ -904,51 +904,6 @@ body {
     margin-left: auto;
 }
 
-/* Todo Actions */
-.todo-actions {
-    display: flex;
-    gap: 2px;
-    opacity: 0;
-    transition: opacity var(--transition-fast);
-}
-
-.todo-item:hover .todo-actions {
-    opacity: 1;
-}
-
-.todo-action-btn {
-    width: 26px;
-    height: 26px;
-    border: none;
-    border-radius: var(--radius-sm);
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--transition-fast);
-}
-
-.todo-action-btn:hover {
-    background: var(--bg-hover);
-}
-
-.todo-action-btn.delete:hover {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--danger);
-}
-
-.todo-action-btn.archive:hover {
-    background: rgba(99, 102, 241, 0.1);
-    color: var(--accent-primary);
-}
-
-.todo-action-btn.expand {
-    font-size: 0.7rem;
-}
-
 /* ===================================
    Empty State
    =================================== */

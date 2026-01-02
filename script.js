@@ -264,6 +264,15 @@ function initPWA() {
         e.preventDefault();
         deferredPrompt = e;
 
+        // Show persistent install button
+        const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+        if (pwaInstallBtn) {
+            pwaInstallBtn.style.display = 'flex';
+            pwaInstallBtn.addEventListener('click', () => {
+                installBanner.classList.add('visible');
+            });
+        }
+
         // Check if user previously dismissed
         const dismissed = localStorage.getItem('pwa-install-dismissed');
         if (!dismissed) {
@@ -320,6 +329,10 @@ function initPWA() {
     window.addEventListener('appinstalled', () => {
         installBanner.classList.remove('visible');
         deferredPrompt = null;
+
+        const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+        if (pwaInstallBtn) pwaInstallBtn.style.display = 'none';
+
         showToast('🎉 App installed!');
     });
 

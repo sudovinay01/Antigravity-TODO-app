@@ -3,9 +3,9 @@
 // Enhanced with better caching strategies
 // ===================================
 
-const CACHE_NAME = 'todo-app-v2';
-const STATIC_CACHE = 'todo-static-v2';
-const DYNAMIC_CACHE = 'todo-dynamic-v2';
+const CACHE_NAME = 'todo-app-v3';
+const STATIC_CACHE = 'todo-static-v3';
+const DYNAMIC_CACHE = 'todo-dynamic-v3';
 
 // Static assets to pre-cache
 const STATIC_ASSETS = [
